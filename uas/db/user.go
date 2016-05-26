@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"encoding/base64"
 	"fmt"
+	"github.com/tiantaozhang/go-blog/util"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"math/rand"
@@ -37,4 +38,35 @@ func ComparePwd(passTC, passC string) error {
 		return nil
 	}
 	return fmt.Errorf("%v", "pwd error")
+}
+
+func AddUsers(users []*User) ([]map[string]interface{}, error) {
+	m := []map[string]interface{}{}
+	for _, u := range users {
+		_, id, err := NewUid()
+		if err != nil {
+			return nil, err
+		}
+		u.Id = id
+		u.Pwd = Pwd(u.Pwd)
+		u.Status = US_NORMAL
+		u.Time = util.TimeM()
+		u.Last = util.TimeM()
+
+		update := bson.M{}
+		update["$setOnInsert"] = u
+		err = C(CN_USER).Upsert(bson.M{"usrname": {"$in": u.UsrName}, "pwd": u.Pwd, "type": u.Type, "status": u.Status}, update)
+		if err == nil {
+			m = append(m, map[string]interface{}{
+				"id":      u.Id,
+				"usrname": u.UsrName,
+				"type":    u.Type,
+				"time":    u.Time,
+			})
+		} else {
+			return err
+		}
+
+	}
+
 }
