@@ -6,15 +6,15 @@ import (
 )
 
 func TimeN() int64 {
-	time.Now().Local().UnixNano()
+	return time.Now().Local().UnixNano()
 }
 
 func TimeM() int64 {
-	time.Now().Local().UnixNano() / 1e6
+	return time.Now().Local().UnixNano() / 1e6
 }
 
-func TimeS() {
-	time.Now().Local().UnixNano() / 1e9
+func TimeS()int64 {
+	return  time.Now().Local().UnixNano() / 1e9
 }
 
 func S2Json(s interface{}) string {
