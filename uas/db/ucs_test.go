@@ -13,17 +13,29 @@ import (
 var user1, user2, user3 *User
 
 func init() {
+	RemoveUser()
 	user1=new(User)
 	user2=new(User)
 	user3=new(User)
 	user1.Pwd = "123456"
 	user2.Pwd = "123456"
 	user3.Pwd = "123456"
-	resm, err := AddUsers([]*User{user1, user2, user3})
+	_, err := AddUsers([]*User{user1, user2, user3})
 	if err != nil {
 		panic(err)
 	}
-	beelog.Debug("AddUsers resm:(%v)",util.S2Json(resm) )
+	//beelog.Debug("AddUsers resm:(%v)",util.S2Json(resm) )
+	beelog.Debug("user1:(%v)",util.S2Json(user1))
+	beelog.Debug("user2:(%v)",util.S2Json(user2))
+	beelog.Debug("user3:(%v)",util.S2Json(user3))
+}
+
+func RemoveUser() error{
+	if _,err:=C(CN_USER).RemoveAll(nil);err!=nil{
+		beelog.Error("user removeall err:%v",err)
+		return err
+	}
+	return nil
 }
 
 func TestLoginAndOut(t *testing.T) {

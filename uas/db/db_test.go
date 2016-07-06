@@ -11,7 +11,7 @@ func init() {
 	}()
 	count:=0
 for{
-	session, err := mgo.Dial("cny:123@127.0.0.1:27017/blog")
+	session, err := mgo.Dial("cny:123@127.0.0.1:27017")
 	if err != nil {
 		panic(err)
 	}

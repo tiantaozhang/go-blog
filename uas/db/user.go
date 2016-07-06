@@ -18,7 +18,7 @@ const (
 
 func Pwd(pass string) string {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	salt := beelog.Debug("%v", r.Intn(8999)+1000)
+	salt := fmt.Sprintf("%v", r.Intn(8999)+1000)
 	m := md5.New()
 	m.Write([]byte(pass))
 	md5P := m.Sum(nil)
