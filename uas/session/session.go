@@ -16,6 +16,17 @@ import (
 	"github.com/tiantaozhang/goColorChange"
 )
 
+var SM *ManagerSession = &ManagerSession{
+	SL:      list.New(),
+	SM:      make(map[interface{}]*list.Element),
+	Name:    "gosid",
+	Expires: EXPIRES,
+}
+
+func init() {
+	SM.Listen()
+}
+
 const (
 	EXPIRES = 10
 )
@@ -98,8 +109,8 @@ func dealSessionHttp(m *ManagerSession, r *http.Request) (*http.Cookie, *Session
 		return nil, nil, err
 	}
 	//uid & token=xxxx
-	user := r.FormValue("user")
-	uid := FindUidByUser(user)
+	//user := r.FormValue("user")
+	uid := r.FormValue("uid")
 	session.Values["uid"] = uid
 	session.Values["token"] = GenToken()
 
@@ -239,10 +250,6 @@ func (m *ManagerSession) GenSid() string {
 		return ""
 	}
 	return base64.URLEncoding.EncodeToString(b)
-}
-
-func FindUidByUser(user string) string {
-	return ""
 }
 
 func GenToken() string {

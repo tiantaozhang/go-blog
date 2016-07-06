@@ -3,6 +3,7 @@ package db
 import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"fmt"
 )
 
 const (
@@ -23,7 +24,7 @@ const (
 func QuerySequence() (uint64, error) {
 	var seq Sequence
 	_, err := C(CN_SEQUENCE).Find(bson.M{"_id": SQN_USR}).Apply(mgo.Change{
-		Update:    bson.M{"$inc": bson{"val": 1}},
+		Update:    bson.M{"$inc": bson.M{"val": 1}},
 		Upsert:    true,
 		ReturnNew: true,
 	}, &seq)
@@ -31,6 +32,6 @@ func QuerySequence() (uint64, error) {
 }
 
 func NewUid() (uint64, string, error) {
-	uid, err := QuerySequence(SQN_USR)
+	uid, err := QuerySequence()
 	return uid, fmt.Sprintf("u%v", uid), err
 }
