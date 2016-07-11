@@ -47,15 +47,24 @@ func ComparePwd(passTC, passC string) error {
 func AddUsers(users []*User) ([]map[string]interface{}, error) {
 	m := []map[string]interface{}{}
 	for _, u := range users {
-		_, id, err := NewUid()
+		intid, id, err := NewUid()
 		if err != nil {
 			return nil, err
 		}
 		u.Id = id
-		u.Pwd = Pwd(u.Pwd)
+		//u.Pwd = Pwd(u.Pwd)
+		u.Pwd=Encrypt(u.Pwd,"")
 		u.Status = US_NORMAL
 		u.Time = util.TimeM()
 		u.Last = util.TimeM()
+		defaultusr:=fmt.Sprintf("%v",intid+1234567)
+		if u.User==nil {
+			u.User=append(u.User,defaultusr)
+		}else{
+			tmpUsr:=u.User
+			u.User=[]string{defaultusr}
+			u.User=append(u.User,tmpUsr...)
+		}
 
 		update := bson.M{}
 		update["$setOnInsert"] = u

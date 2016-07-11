@@ -15,6 +15,7 @@ type User struct {
 const (
 	UT_ADMIN   = 10 //the admin
 	UT_BLOGGER = 20 //the blog owner
+	UT_VISITOR = 30 //visitor
 )
 
 const (

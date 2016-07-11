@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
+	"github.com/tiantaozhang/go-blog/blog/blog"
 )
 
 func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -48,6 +49,7 @@ func main() {
 	router := httprouter.New()
 	router.GET("/", Index)
 	router.GET("/hello/:name", Hello)
+	router.GET("/view/:id", blog.View)
 
 	// Make a new HostSwitch and insert the router (our http handler)
 	// for example.com and port 12345

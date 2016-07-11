@@ -13,8 +13,12 @@ import (
 	"sync"
 	"time"
 
+	"github.com/astaxie/beego/logs"
 	"github.com/tiantaozhang/goColorChange"
+	"github.com/tiantaozhang/go-blog/util"
 )
+
+var beelog *logs.BeeLogger
 
 var SM *ManagerSession = &ManagerSession{
 	SL:      list.New(),
@@ -25,6 +29,11 @@ var SM *ManagerSession = &ManagerSession{
 
 func init() {
 	SM.Listen()
+
+	beelog = logs.NewLogger(0)
+	beelog.SetLogger("console", "")
+	beelog.SetLevel(logs.LevelDebug)
+	beelog.EnableFuncCallDepth(true)
 }
 
 const (
@@ -69,28 +78,28 @@ func (m *ManagerSession) Start(w http.ResponseWriter, r *http.Request) (session 
 	// defer m.Lock.Unlock()
 	cookie, err := r.Cookie(m.Name)
 	if err != nil || cookie.Value == "" {
-		FmtPrintf("session start if")
+		beelog.Warn("session start if")
 		cookie := new(http.Cookie)
 		cookie, session, err = dealSessionHttp(m, r)
 		http.SetCookie(w, cookie)
 		return
 	} else {
-		FmtPrintf("session start else")
+		beelog.Warn("session start else")
 		var sid string
 		sid, err = url.QueryUnescape(cookie.Value)
 		if err != nil {
-			log.Printf("in start,QueryUnescape sid:(%v),err:(%v)", sid, err)
+			beelog.Debug("in start,QueryUnescape sid:(%v),err:(%v)", sid, err)
 			return
 		}
 		if session, err = m.Get(sid); err != nil {
-			log.Printf("in start,get session by sid:(%v),err:(%v)", sid, err)
+			beelog.Debug("in start,get session by sid:(%v),err:(%v)", sid, err)
 			if err.Error() != GETERRNOTFOUND {
 				return
 			}
 			cookie := new(http.Cookie)
 			cookie, session, err = dealSessionHttp(m, r)
 			if err != nil {
-				log.Printf("in start dealSessionHttp,err:(%v)", err)
+				beelog.Debug("in start dealSessionHttp,err:(%v)", err)
 				return
 			}
 			http.SetCookie(w, cookie)
@@ -105,7 +114,7 @@ func dealSessionHttp(m *ManagerSession, r *http.Request) (*http.Cookie, *Session
 	session := m.NewSession(nil)
 	var err error
 	if err = r.ParseForm(); err != nil {
-		log.Printf("manager start,parseForm,err:(%v)", err)
+		beelog.Debug("manager start,parseForm,err:(%v)", err)
 		return nil, nil, err
 	}
 	//uid & token=xxxx
@@ -114,12 +123,12 @@ func dealSessionHttp(m *ManagerSession, r *http.Request) (*http.Cookie, *Session
 	session.Values["uid"] = uid
 	session.Values["token"] = GenToken()
 
-	FmtPrintf("session:sid:(%v),values:(%v)", session.Sid, session.Values)
+	beelog.Debug("session:sid:(%v),values:(%v)", session.Sid, session.Values)
 	if err = m.Set(session); err != nil {
-		log.Printf("manager start,set session,err:(%v)", err)
+		beelog.Debug("manager start,set session,err:(%v)", err)
 		return nil, nil, err
 	}
-
+	beelog.Debug("session sid:(%v),session values:(%v)", session.Sid, session.Values)
 	cookie := http.Cookie{Name: m.Name, Value: url.QueryEscape(session.Sid), Path: "/", HttpOnly: true, MaxAge: m.Expires}
 	return &cookie, session, nil
 }
@@ -161,7 +170,7 @@ func (m *ManagerSession) Listen() {
 
 		defer func() {
 			if err := recover(); err != nil {
-				log.Printf("the listen is panic->%v, the call stack is \n%v\n", err, CallStatck())
+				beelog.Debug("the listen is panic->%v, the call stack is \n%v\n", err, CallStatck())
 			}
 		}()
 
@@ -207,16 +216,17 @@ func (m *ManagerSession) Set(s *Session) error {
 
 func (m *ManagerSession) set(s *Session) error {
 	if s.Sid == "" || s.Key != m.Name {
-		log.Printf("session err:s.sid:(%v),s.key:%v\n", s.Sid, s.Key)
+		beelog.Error("session err:s.sid:(%v),s.key:%v\n", s.Sid, s.Key)
 		return fmt.Errorf("session err:s.sid:(%v),s.key:(%v)", s.Sid, s.Key)
 	}
 	if m.SM[s.Sid] == nil {
 		//not exist
-		FmtPrintf("set s,m.SM[%v] is nil", s.Sid)
+		beelog.Warn("set function,s,m.SM[%v] is nil,pushback", s.Sid)
 		m.SL.PushBack(s)
 	} else {
 		for e := m.SL.Front(); e != nil; e = e.Next() {
 			if s.Sid == e.Value.(*Session).Sid {
+				beelog.Warn("set function,s,m.SM[%v] is %v,movetoback", s.Sid,util.S2Json(s.Values))
 				e.Value.(*Session).Expires = m.Expires
 				m.SL.MoveToBack(e)
 				break

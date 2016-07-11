@@ -62,6 +62,22 @@ func checkUser(user []*User) error {
 
 func Login(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	beelog.Debug("---------Login-------- ")
+
+	if c, err := r.Cookie(session.SM.Name);err==nil{
+		sid, _ := url.QueryUnescape(c.Value)
+		//sid:=c.Value
+		if _,err=session.SM.Get(sid);err!=nil{
+			beelog.Error("login cookie not nil,sid(%v)-->err(%v)",sid,err)
+			//http.Error(w,err.Error(),http.StatusNotFound)
+			//return
+		}else{
+			beelog.Debug("cookie not nil, c.value:%v",sid)
+			http.Redirect(w, r, "http://www.baidu.com", http.StatusOK)
+			return
+		}
+
+	}
+
 	if err := r.ParseForm(); err != nil {
 		beelog.Error("login parseform err(%v)", err)
 		return
@@ -72,14 +88,14 @@ func Login(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
-	beelog.Debug("res:(%v)", string(res))
+	beelog.Debug("request body:(%v)", string(res))
 	var UsrInfo struct {
 		User string `json:"user"`
 		Pwd  string `json:"pwd"`
 	}
 	if err := json.Unmarshal(res, &UsrInfo); err != nil {
 		beelog.Error("login Unmarshal err(%v)", err)
-		http.Error(w,err.Error(),http.StatusNotFound)
+		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 
@@ -103,14 +119,16 @@ func Login(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	}
 	//?
 	r.Form.Set("uid", u.Id)
-	if _, err := do_login(w, r); err != nil {
+	if sess, err := do_login(w, r); err != nil {
 		beelog.Error("do_login --> err(%v)", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
+	} else {
+		// redirect
+		beelog.Debug("login user(%v) success session sid(%v) value(%v) key(%v)", user, sess.Sid,sess.Values,sess.Key)
+		http.Redirect(w, r, "http://www.baidu.com", http.StatusOK)
 	}
-	// redirect
-	beelog.Debug("login user(%v) success", user)
-	http.Redirect(w, r, "http://www.baidu.com", http.StatusOK)
+
 	return
 }
 
@@ -122,7 +140,7 @@ func Logout(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	c, err := r.Cookie(session.SM.Name)
 	if err != nil {
 		beelog.Error("r.cookie (%v)-->err(%v)", session.SM.Name, err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
 
@@ -133,7 +151,25 @@ func Logout(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	beelog.Debug("user(%v) logout", r.FormValue("user"))
+	res, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		beelog.Error("login readall err:(%v)", err)
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+	beelog.Debug("request body:(%v)", string(res))
+	var UsrInfo struct {
+		User string `json:"user"`
+		Pwd  string `json:"pwd"`
+	}
+	if err := json.Unmarshal(res, &UsrInfo); err != nil {
+		beelog.Error("login Unmarshal err(%v)", err)
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+	beelog.Debug("user(%v) logout",UsrInfo.User )
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("OK"))
 	return
 }
 
