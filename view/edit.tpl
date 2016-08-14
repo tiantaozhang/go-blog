@@ -1,9 +1,8 @@
-<h1>Edit {{.Post.Title}}</h1>
+<h1>Edit {{.title}}</h1>
 
-<h1>New Blog Post</h1>
 <form action="" method="post">
-    标题:<input type="text" name="title" value="{{.Post.Title}}"><br>
-    内容：<textarea name="content" colspan="3" rowspan="10">{{.Post.Content}}</textarea>
-    <input type="hidden" name="id" value="{{.Post.Id}}">
+    标题:<input id="t1" type="text" name="title" value="{{.title}}"><br>
+    内容：<textarea name="content" colspan="30" rowspan="50">{{.content}}</textarea>
+    <input type="hidden" name="id" value="{{._id}}">
     <input type="submit">
 </form>

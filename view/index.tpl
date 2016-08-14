@@ -1,12 +1,22 @@
 <h1>Blog posts</h1>
-
+<p>
+{{.title}}	
+</p>
+<div>
 <ul>
+
     {{range .blogs}}
+    {{with .}}
     <li>
-        <a href="/view/{{.Id}}">{{.Title}}</a>
-        from {{.Created}}
-        <a href="/edit/{{.Id}}">Edit</a>
-        <a href="/delete/{{.Id}}">Delete</a>
+		<a href="/view/{{._id}}">{{.title}}</a>
+        <a href="/edit/{{._id}}">Edit</a>
+        <a href="/delete/{{._id}}">Delete</a>
     </li>
     {{end}}
+    {{end}}
 </ul>
+
+</div>
+
+     
+

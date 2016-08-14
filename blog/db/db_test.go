@@ -1,6 +1,7 @@
 package db
 
 import (
+	"github.com/tiantaozhang/go-blog/logs"
 	"gopkg.in/mgo.v2"
 	"time"
 )
@@ -17,6 +18,7 @@ for{
 	}
 	if err=session.Ping();err!=nil{
 		beelog.Error("session ping err:%v",err)
+		session.Close()
 	}else{
 		C = session.DB("blog").C
 		break
@@ -27,5 +29,6 @@ for{
 		panic(err)
 	}
 }
+	logs.Beelog.Info("blog db init success")
 
 }

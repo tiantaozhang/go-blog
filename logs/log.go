@@ -7,9 +7,9 @@ import (
 var Beelog *logs.BeeLogger
 
 func init() {
-	beelog = logs.NewLogger(0)
-	beelog.SetLogger("console", "")
-	beelog.EnableFuncCallDepth(true)
-	beelog.SetLevel(logs.LevelDebug)
-	beelog.SetLogFuncCallDepth(2)
+	Beelog = logs.NewLogger(0)
+	Beelog.SetLogger("console", "")
+	Beelog.EnableFuncCallDepth(true)
+	Beelog.SetLevel(logs.LevelDebug)
+	Beelog.SetLogFuncCallDepth(2)
 }

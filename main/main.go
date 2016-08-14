@@ -7,6 +7,8 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/tiantaozhang/go-blog/blog/db"
+
 	"github.com/julienschmidt/httprouter"
 	"github.com/tiantaozhang/go-blog/blog/blog"
 )
@@ -45,14 +47,23 @@ func (hs HostSwitch) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	db.InitDb()
 	// Initialize a router as usual
 	router := httprouter.New()
 	router.GET("/", Index)
 	router.GET("/hello/:name", Hello)
 	router.GET("/view/:id", blog.View)
-
+	router.GET("/newblog", blog.NewBlogG)
+	router.GET("/indexblog", blog.IndexBlog)
+	router.GET("/edit/:id", blog.EditBlogG)
+	router.GET("/delete/:id", blog.DeleteBlog)
+	router.POST("/newblog", blog.NewBlogP)
+	router.POST("/edit/:id", blog.EditBlogP)
 	// Make a new HostSwitch and insert the router (our http handler)
 	// for example.com and port 12345
+	//http.Handle("/static", http.StripPrefix("/static", http.FileServer(http.Dir("view"))))
+
+	router.ServeFiles("/static/*filepath", http.Dir("view"))
 	hs := make(HostSwitch)
 	hs["127.0.0.1:12345"] = router
 

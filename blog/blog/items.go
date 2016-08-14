@@ -1,9 +1,10 @@
 package blog
 
 type Blog struct {
-	Id      string                 `bson:"_id" json:"_id"`
+	Id      string                 `bson:"_id" json:"id"`
 	Title   string                 `bson:"title" json:"title"`
 	Content string                 `bson:"content" json:"content"`
+	Uid     string                 `bson:"uid" json:"uid"`
 	Author  string                 `bson:"author" json:"author"`
 	Replies int                    `bson:"reply" json:"reply"`
 	Views   int                    `bson:"views" json:"views"`
