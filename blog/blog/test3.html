@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+
+<div id="container" style="width: 500px">
+	
+<div id="header" style="background-color: #FFA500;">
+<h1 style="margin-bottom: 0">Main Title of Web Page</h1>	
+</div>
+
+<div id="menu" style="background-color: #FFD700; height: 200px; width: 100px;float: left;">
+Menu</br>
+Html</br>
+Css</br>
+JavaScript</div>
+
+
+<div id="content" style="background-color: #EEEEEE;height: 200px;width: 400px; float: left;">
+	Content goes here
+</div>
+
+<div id="footer" style="background-color: #FFA500; clear: both;text-align: center; ">
+	Copyright © ZZZZ
+
+</div>
+
+<form action="" name="input" method="get">
+	First name:<input type="text" name="firstname"><br></input>
+	Last name:<input type="text" name="lastname"></input></form></br>
+	Account:<input type="text" name="account"></input></br>
+	Pwd:<input type="password" name="password"></input></br>
+	<input type="submit" value="submit"></input><br>
+</form>
+
+<textarea rows="10" cols="30">
+	我就是一个文本框
+</textarea>
+
+<form action="">
+	<input type="button" value="hello world!"></input>
+
+</form>
+
+<form action="MAILTO:someone@example.com" method="post" enctype="text/plain">
+Name:<br>
+<input type="text" name="name" value="your name"><br>
+E-mail:<br>
+<input type="text" name="mail" value="your email"><br>
+Comment:<br>
+<input type="text" name="comment" value="your comment" size="50"><br><br>
+<input type="submit" value="Send">
+<input type="reset" value="Reset">
+</form>
+
+
+<iframe src="http://www.w3cschool.cc" width="400" height="400" frameborder="0" name="iframe1"></iframe>
+<p><a href="http://www.runoob.com" target="iframe1">RUNOOB.COM</a></p>
+
+<p id="demo">
+JavaScript can react to events. Like the click of a button.
+</p>
+
+<script>
+function myFunction()
+{
+document.getElementById("demo").innerHTML="Hello JavaScript!";
+}
+</script>
+
+<button type="button" onclick="myFunction()">Click Me!</button>
+
+<p id="demo1">  
+my can't react?
+</p>
+
+<script>
+function myFunc() {
+	document.getElementById("demo1").innerHTML="Hello JavaScript!!!!"
+}
+</script>
+<button type="button" onclick="myFunc()">Click!</button>
+
+
+
+</body>
+</html>

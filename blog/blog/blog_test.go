@@ -56,6 +56,12 @@ func TestRequest(t *testing.T) {
 	route.ServeHTTP(w4, r4)
 	logs.Beelog.Debug("delete:%v", w4.Body.String())
 
+	r5, _ := http.NewRequest("POST", "/newblog", strings.NewReader(`{"title":"5th blog","content":"this is the 5th blog,congratulation","type":10}`))
+	w5 := httptest.NewRecorder()
+
+	route.ServeHTTP(w5, r5)
+	logs.Beelog.Debug("body:%v", w5.Body.String())
+
 }
 
 func TestBinary(t *testing.T) {

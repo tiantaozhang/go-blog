@@ -2,17 +2,95 @@
 是十六进制的RGB表示方法，即图片周边的暗红色。也可以使用哪个url()的方式为body部分
 设置背景图片*/
 body{
-    background-color: #FFFFFF;
-    /*background-color: red;*/
+    margin: 0 0;
+    padding: 0px;
+
 }
+
+#main{
+    background-color: #222222;
+    margin: 0px;
+    padding: 0px;
+}
+
+#nav ul li{
+    margin: 0px 0px;
+    list-style: none;
+    padding: 5px;
+    height: 30px;
+    display: inline-block;
+    text-decoration: none;
+}
+
+#nav ul li a,#nav .logo a{
+    text-decoration: none;
+    display: inline-block;
+    height: 30px;
+    line-height: 30px;
+    margin-right: 5px;
+    color: #eee;
+}
+
+.logo{
+    margin: 0 0;
+    font-size: 20px;
+    font-weight: 700;
+    float: left;
+    margin: 0px 10px;
+    padding: 5px;
+}
+
+
+#nav ul{
+    margin: 0px 0px;
+    float: right;
+}
+
+#nav{
+    background-color: #48525e;
+    width: 100%;
+    height: 30px;
+}
+
+
+
 /*html元素的id属性使用#开头。width、herght表示宽与高，大小使用像素表示。
 margin表示显示方式，默认靠左，auto设置为居中显示，并设定背景颜色为red*/
 #head{
     width: 100%;
-    height: 80px;
-    margin: auto;
-    background-color: green;
+    height: 200px;
+    margin-top: 0px;
+    margin-left: 0px;
+    padding: 0px;
+    /*background-color: #fff;*/
 }
+
+
+#inner{
+    position: relative;
+    margin-top: 10px;
+    text-align: center;
+    margin: 0px auto;
+}
+
+header #banner #inner p{
+    text-align: center;
+    color: white;
+}
+
+header #banner #inner h1{
+    color: yellow;
+}
+
+header #banner #inner button{
+    border: none;
+    background: #777;
+    color: #eee;
+    padding: 5px;
+    border-radius: 10%;
+}
+
+
 
 .author{
     float: left;
@@ -28,44 +106,138 @@ margin表示显示方式，默认靠左，auto设置为居中显示，并设定�
 
 #container{
     width: 100%;
-    height: 480px;
+    height: 800px;
     margin: auto;
     margin-top: 0px;
-    background-color: yellow;
+    margin-bottom: -120px;
+    background-color: #f9f5f1;
 }
+
 /*html元素定义class属性使用点.开头。float设置该块的漂浮属性，在container内向左移,
 另一个快siderbar在container内向右移*/
 .main{
     float: left;
     width: 80%;
     height: 500px;
-    background-color: #BBBBBB;
+    background-color: #b0c4de;
+}
+
+
+.subject{
+    float: right;
+    width: 80%;
+    height: 800px;
+    background-color: #eeb;
 }
 /*因为main和siderbar在container内，所以两个块的宽度之和不应该超过container的宽度*/
 .sidebar{
-    float: right;
+    float: left;
     width: 20%;
-    height: 500px;
+    height: 800px;
     background-color: gray;
+}
+
+#avatar{
+    width: 70%;
+    height: 200px;
+    margin: auto;
+    margin-top: 20px;
+
+}
+
+#visit{
+    width: 100%;
+    height: 50px;
+    margin-left: 10px;
+}
+
+
+#visit ul{
+    padding: 0px;
+    margin: 0px 0px;
+}
+
+#visit ul li{
+    padding: 0px;
+    margin: 0px 0px;
+    list-style: none;
+    height: 25px;
+    text-decoration: none;
+}
+
+
+#avatar > img{
+    width: 100%;
+    height: 180px;
+
+}
+
+#avatar > span{
+    width: 100%;
+    height: 20px
+}
+
+.nickname{
+   width: auto;
+   text-align: center;
+}
+
+.username{
+    font-size: 12px;
+    text-align: center;
+    text-decoration: none;
+    color: #fff;
+    
+}
+
+#comment{
+    width: inherit;
+    height: 275px;
+}
+
+#readcount{
+    width: inherit;
+    height: 275px;
 }
 
 
 /*底部块的id值，大小及颜色、居中显示*/
-#bottom{
+footer{
     width: 100%;
-    height: 90px;
-    background-color: #FFAA44;
-    margin: auto;
+    background: #555;
+    min-height: 200px;
+    /*height: 120px;*/
+    color: #fff;
+    text-align: center; 
     
 }
+
+#foot{
+    width: inherit;
+    height: 20px;
+    /*background: #FFAA44;*/
+    margin-top: 100px;
+}
+
+footer > ul{
+    
+    margin: 0 auto;
+    display: block;
+}
+
+footer >ul>li{
+    display: inline-block;
+    padding: 20px;
+}
+
 /*重新定义h1元素的显示，由于h1默认有边距margin-top将顶部间距设为0，
 text-align为设置字体的显示位置属性：center是居中显示，font-size定义大小*/
-h1{
+/*h1{
     margin-top: 0px;
     text-align: center;
     color: yellow;
     font-size: 35px;
-}
+}*/
 /*定义bottom中的h1显示方式，其他的h1字体颜色为white，此处h1颜色为red，大小也改变。
 当多处定义了同一个元素时，最精确的生效*/
 #bottom h1{
