@@ -13,9 +13,10 @@ import (
 	"sync"
 	"time"
 
+	"gopkg.in/mgo.v2/bson"
+
 	"github.com/astaxie/beego/logs"
 	"github.com/tiantaozhang/goColorChange"
-	"github.com/tiantaozhang/go-blog/util"
 )
 
 var beelog *logs.BeeLogger
@@ -119,8 +120,10 @@ func dealSessionHttp(m *ManagerSession, r *http.Request) (*http.Cookie, *Session
 	}
 	//uid & token=xxxx
 	//user := r.FormValue("user")
-	uid := r.FormValue("uid")
-	session.Values["uid"] = uid
+	user := r.FormValue("user")
+	session.Values["user"] = user
+	//find uid by user and pwd
+	//session.Values["uid"] = uid
 	session.Values["token"] = GenToken()
 
 	beelog.Debug("session:sid:(%v),values:(%v)", session.Sid, session.Values)
@@ -147,13 +150,7 @@ func (m *ManagerSession) Get(sid string) (*Session, error) {
 	m.SM[sid].Value.(*Session).Expires = m.Expires
 	s := m.SM[sid].Value.(*Session)
 	//garbage recover
-	for e := m.SL.Front(); e != nil; e = e.Next() {
-		if sid == e.Value.(*Session).Sid {
-			e.Value = s
-			m.SL.MoveToBack(e)
-			break
-		}
-	}
+	m.SL.MoveToBack(m.SM[sid])
 
 	return s, nil
 }
@@ -178,22 +175,25 @@ func (m *ManagerSession) Listen() {
 		for {
 			select {
 			case <-t.C:
-				m.Lock.Lock()
+				m.Lock.RLock()
 				var n *list.Element
 				for e := m.SL.Front(); e != nil; e = n {
 					n = e.Next()
 					if e.Value.(*Session).Expires == 0 {
 						FmtPrintf("listen gc-->delete sid:%v", e.Value.(*Session).Sid)
+						m.Lock.RUnlock()
+						m.Lock.Lock()
 						m.SL.Remove(e)
 						delete(m.SM, e.Value.(*Session).Sid)
+						m.Lock.Unlock()
+						m.Lock.RLock()
 					} else {
-
 						e.Value.(*Session).Expires--
 						//m.SM[e.Value.(*Session).Sid].Value.(*Session).Expires--
 						FmtPrintf("listen gc-->expires--:%v,sid:%v", e.Value.(*Session).Expires, e.Value.(*Session).Sid)
 					}
 				}
-				m.Lock.Unlock()
+				m.Lock.RUnlock()
 			}
 		}
 	}()
@@ -224,14 +224,8 @@ func (m *ManagerSession) set(s *Session) error {
 		beelog.Warn("set function,s,m.SM[%v] is nil,pushback", s.Sid)
 		m.SL.PushBack(s)
 	} else {
-		for e := m.SL.Front(); e != nil; e = e.Next() {
-			if s.Sid == e.Value.(*Session).Sid {
-				beelog.Warn("set function,s,m.SM[%v] is %v,movetoback", s.Sid,util.S2Json(s.Values))
-				e.Value.(*Session).Expires = m.Expires
-				m.SL.MoveToBack(e)
-				break
-			}
-		}
+
+		m.SL.MoveToBack(m.SM[s.Sid])
 	}
 
 	m.SM[s.Sid] = &list.Element{Value: s}
@@ -244,13 +238,9 @@ func (m *ManagerSession) Del(sid string) error {
 	if m.SM[sid] == nil {
 		return fmt.Errorf("not exist session's sid=%v", sid)
 	}
+	m.SL.Remove(m.SM[sid])
 	delete(m.SM, sid)
-	for e := m.SL.Front(); e != nil; e = e.Next() {
-		if sid == e.Value.(*Session).Sid {
-			m.SL.Remove(e)
-			break
-		}
-	}
+
 	return nil
 }
 
@@ -263,7 +253,7 @@ func (m *ManagerSession) GenSid() string {
 }
 
 func GenToken() string {
-	return ""
+	return bson.NewObjectId().Hex()
 }
 
 func FmtPrintf(format string, args ...interface{}) {

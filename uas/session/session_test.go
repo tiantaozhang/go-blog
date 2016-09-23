@@ -75,6 +75,7 @@ func TestSession(t *testing.T) {
 	} else {
 		FmtPrintf("key:%s,sid:%s", sess.Key, sess.Sid)
 	}
+
 	//the first sid
 
 	//r.Header.Set("Set-Cookie", )
@@ -99,6 +100,7 @@ func TestSession(t *testing.T) {
 		t.Error("del 123 err")
 	}
 	//del and request
+
 	sessnil, err := Ms.Start(w, r)
 	if sessnil.Sid == sid {
 		t.Error("new sess sid:(%v) is same as old sid:(%v)", sess.Key, sid)
@@ -116,7 +118,7 @@ func TestSession(t *testing.T) {
 		return
 	}
 
-	time.Sleep(6 * time.Second)
+	time.Sleep(7 * time.Second)
 
 	if s, err := Ms.Get(sessionNew.Sid); err == nil {
 		t.Error("err,sid:", s.Sid)
