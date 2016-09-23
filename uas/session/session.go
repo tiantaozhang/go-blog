@@ -5,7 +5,6 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"fmt"
-	"log"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -259,8 +258,10 @@ func GenToken() string {
 func FmtPrintf(format string, args ...interface{}) {
 
 	goColorChange.ChangeColorAndStyle(goColorChange.Underline, goColorChange.Green, goColorChange.None)
-	log.Printf(format, args...)
-	log.Printf("\n")
+	//log.Printf(format, args...)
+	//log.Printf("\n")
+	goColorChange.LogToFile("", 1, format, args...)
+
 	goColorChange.ResetColor()
 }
 
